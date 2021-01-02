@@ -1,6 +1,6 @@
 ﻿namespace Puzzle15
 {
-    partial class Form1
+    partial class Puzzle
     {
         /// <summary>
         /// Required designer variable.
