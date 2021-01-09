@@ -13,6 +13,8 @@ namespace Puzzle15
     public partial class Puzzle : Form
     {
         List<Button> tiles = new List<Button>();
+        List<Point> initialLocations = new List<Point>();
+
         Random rand = new Random();
 
         public Puzzle()
@@ -27,6 +29,11 @@ namespace Puzzle15
            
             int tileCounter = 1;
             Button tile = null;
+
+            this.Width = 420;
+            this.Height = 440;
+            
+
             for(int j = 0; j < 4; j++)
             {
                 for (int i = 0; i < 4; i++)
@@ -34,11 +41,15 @@ namespace Puzzle15
                    
                    
                     tile = new Button();
-                    tile.BackColor = Color.SteelBlue;
+                    tile.BackColor = Color.DarkGoldenrod;
+                    tile.ForeColor = Color.White;
+                    tile.FlatStyle = FlatStyle.Flat;
+                    tile.Font = new Font("Consolas", 20);
+
                     tile.Width = 80;
                     tile.Height = 80;
-                    tile.Top = 20 + j * 80;
-                    tile.Left = 20 + i * 80;
+                    tile.Top = 20 + j * 90;
+                    tile.Left = 20 + i * 90;
 
                     tile.Click += Tile_Click;
 
@@ -54,6 +65,7 @@ namespace Puzzle15
                     
                     this.Controls.Add(tile);
                     tiles.Add(tile);
+                    initialLocations.Add(tile.Location);
 
                     tileCounter++;
                 }
@@ -65,7 +77,12 @@ namespace Puzzle15
         private void Tile_Click(object sender, EventArgs e)
         {
             Button tile = (Button)sender;
-            SwapTiles(tile);
+
+            if (CanSwap(tile))
+            {
+                SwapTiles(tile);
+                CheckForWIn();
+            }     
         }
 
         private void SwapTiles(Button tile)
@@ -84,6 +101,44 @@ namespace Puzzle15
             {
                 SwapTiles(tiles[rand.Next(0, 15)]);
             }            
+        }
+
+        private bool CanSwap(Button tile)
+        {
+            Button tileEmpty = (Button)this.Controls["TileEmpty"];
+
+            double a = 0, b = 0, c = 0;
+            a = tileEmpty.Left - tile.Left;
+            b = tileEmpty.Top - tile.Top;
+            c = Math.Sqrt(Math.Pow(a, 2) + Math.Pow(b, 2));
+
+            if (c <= 90)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void CheckForWIn()
+        {
+            bool win = true;
+            for(int i = 0; i < 16; i++)
+            {
+                win = win & tiles[i].Location == initialLocations[i];
+            }
+
+            if (win)
+            {
+                GameOver();
+            }
+        }
+
+        private void GameOver()
+        {
+            MessageBox.Show("You win!");
         }
 
     }
